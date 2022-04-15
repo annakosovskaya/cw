@@ -1,0 +1,11 @@
+from itertools import product
+from itertools import combinations
+import numpy as np
+    
+verticles = [_ for _ in product([0, 1], [0, 1], [0, 1])][1:]
+all_triangles = [list(_) for _ in combinations(verticles, 3)]
+triangles = [triangle for triangle in all_triangles if matrix(GF(2), triangle).det() != 0]
+
+# короткий способ
+U_3 = SimplicialComplex(triangles)
+print(U_3.homology()[0])
