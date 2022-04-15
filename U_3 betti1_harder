@@ -1,0 +1,36 @@
+from itertools import product
+from itertools import combinations
+
+def dim_Z(verticles, ribs):
+    # будет лишняя первая строка с нулями, но на ранг это не повлияет
+    Z = matrix(GF(2), 1, len(ribs))
+    
+    for vert in verticles:
+        new_line = [1 if vert in rib else 0 for rib in ribs]
+        Z = Z.stack(vector(GF(2), new_line))
+
+    return len(ribs) - Z.rank()
+
+
+def dim_B(ribs, triangles):
+    # будет лишняя первая строка с нулями, но на ранг это не повлияет
+    B = matrix(GF(2), 1, len(triangles))
+
+    for rib in ribs:
+        new_line = [1 if len(set(rib) & set(triangle)) == 2
+                      else 0 for triangle in triangles]
+        B = B.stack(vector(GF(2), new_line))
+        
+    return B.rank()
+
+
+verticles = [_ for _ in product([0, 1], [0, 1], [0, 1])][1:]
+ribs = [list(_) for _ in combinations(verticles, 2)]
+
+all_triangles = [list(_) for _ in combinations(verticles, 3)]
+triangles = [triangle for triangle in all_triangles if matrix(GF(2), triangle).det() != 0]
+
+dim_Z = dim_Z(verticles, ribs)
+dim_B = dim_B(ribs, triangles)
+
+print(dim_Z - dim_B)
